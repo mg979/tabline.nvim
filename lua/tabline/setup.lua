@@ -126,8 +126,9 @@ end
 function M.load_theme(reload) -- Load theme {{{1
   if M.settings.theme then
     local themes = require'tabline.themes'
-    if themes[M.settings.theme] then
-      themes.apply(M.settings.theme)
+    local theme = themes.themes[M.settings.theme]
+    if theme then
+      themes.apply(theme)
     else
       local loaded, theme = pcall(require, 'tabline.themes.' .. M.settings.theme)
       if not loaded then
