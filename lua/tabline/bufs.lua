@@ -103,7 +103,9 @@ local function special_or_listed(bnr) -- {{{1
     buf.special = true
 
   elseif getbufvar(bnr, '&buftype') == 'terminal' then
-    if strfind(buf.path, ';#FZF') then
+    if buf.path == nil then
+      buf.name = 'TERMINAL'
+    elseif strfind(buf.path, ';#FZF') then
       buf.name = 'FZF'
       buf.basename = 'fzf'
       buf.doubleicon = true
