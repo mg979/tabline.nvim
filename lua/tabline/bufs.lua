@@ -8,6 +8,7 @@ local icons = require'tabline.setup'.icons
 local strfind = string.find
 local gsub = string.gsub
 local insert = table.insert
+local remove = table.remove
 local sort = table.sort
 local index = require'tabline.table'.index
 local copy = require'tabline.table'.copy
@@ -227,10 +228,7 @@ end
 --
 -- @return: the ordered list of the buffers to render
 -------------------------------------------------------------------------------
-function M.get_bufs(all)
-  if all then
-    return M.valid_bufs()
-  end
+function M.get_bufs()
   g.valid, g.pinned = M.valid_bufs()
   if s.filtering then
     local cwd = getcwd()
@@ -311,6 +309,7 @@ function M.recent_bufs()
   if g.buffers[cur] and not index(recent, cur) then
     insert(recent, cur)
   end
+  -- ensure pinned buffers are in the list
   for _, b in ipairs(g.pinned) do
     if not index(recent, b) then
       insert(recent, 1, b)
@@ -342,6 +341,18 @@ function M.ordered_bufs(recent, cwd)
   for _, b in ipairs(recent) do
     if not index(order, b) then
       insert(order, b)
+    end
+  end
+  -- keep pinned buffers to the left of the tabline
+  for i = 1, #order do
+    if g.buffers[order[i]].pinned then
+      insert(order, 1, remove(order, i))
+    end
+  end
+  -- same with special buffers, but before pinned ones
+  for i = 1, #order do
+    if g.buffers[order[i]].special then
+      insert(order, 1, remove(order, i))
     end
   end
   return order

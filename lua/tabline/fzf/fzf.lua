@@ -70,7 +70,7 @@ local function format_buffer(_,b) -- {{{1
 end
 
 local function tab_buffers() -- {{{1
-  local bufs = copy(require'tabline.bufs'.get_bufs(true))
+  local bufs = copy(require'tabline.bufs'.valid_bufs())
   local cur, alt = bufnr(), bufnr('#')
 
   -- put alternate buffer last, then current after it
