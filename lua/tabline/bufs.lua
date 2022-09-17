@@ -343,16 +343,18 @@ function M.ordered_bufs(recent, cwd)
       insert(order, b)
     end
   end
-  -- keep pinned buffers to the left of the tabline
-  for i = 1, #order do
-    if g.buffers[order[i]].pinned then
-      insert(order, 1, remove(order, i))
+  -- keep special/pinnded buffers to the left of the tabline
+  local moveWhere = 1
+  for i = moveWhere, #order do
+    if g.buffers[order[i]].special then
+      insert(order, moveWhere, remove(order, i))
+      moveWhere = moveWhere + 1
     end
   end
-  -- same with special buffers, but before pinned ones
-  for i = 1, #order do
-    if g.buffers[order[i]].special then
-      insert(order, 1, remove(order, i))
+  for i = moveWhere, #order do
+    if g.buffers[order[i]].pinned then
+      insert(order, moveWhere, remove(order, i))
+      moveWhere = moveWhere + 1
     end
   end
   return order
