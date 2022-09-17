@@ -32,11 +32,18 @@ local mode_label = require'tabline.render.corners'.mode_label
 local function bufwidth(str) str = subst(str, '%%#%w+#', '') return strwidth(str) end
 local function tabwidth(str) str = subst(subst(str, '%%#%w+#', ''), '%%%d+T', '') return strwidth(str) end
 
+-- button to close buffer
+local BUTTON = '@CloseButtonClick@' .. i.close .. '%X'
+
 -------------------------------------------------------------------------------
 -- Entry point for tabline rendering
 -------------------------------------------------------------------------------
 
+local BuffersMode
+
 function render()
+  BuffersMode = h.buffers_mode()
+
   if o.columns < 40 then
     return format_right_corner()
   elseif h.tabs_mode() then
@@ -76,6 +83,15 @@ local function tabs_badge() -- Tabs badge {{{1
   end
 end
 
+local function clickable_label(tab)
+  return '%' .. tab.n .. '@BuflineClick@' .. tab.label .. '%X'
+end
+
+local function clickable_button(tab)
+  return '%' .. tab.n .. '@BuflineClick@' .. tab.label
+  .. '%X%' .. tab.n .. BUTTON
+end
+
 -- }}}
 
 function fit_tabline(center, tabs)
@@ -96,6 +112,33 @@ function fit_tabline(center, tabs)
   end
 
   local buttonWidth = s.show_button and 3 or 0
+
+  -- function to use for building clickable label
+  local clickable = s.show_button and clickable_button or clickable_label
+
+  -- reserved space on the left for pinned/special buffers
+  local LEFT = ''
+
+  if BuffersMode then
+    while next(tabs) and limit > 0 do
+      if tabs[1].keepleft then
+        local w = labelwidth(tabs[1].label) + buttonWidth
+        if limit - w < 0 then
+          if s.tabs_badge and s.tabs_badge.left then
+            return tabsbadge .. modebadge .. LEFT .. '%#TFill#%=' .. cwdbadge .. '%999X'
+          else
+            return modebadge .. LEFT .. '%#TFill#%=' .. tabsbadge .. cwdbadge .. '%999X'
+          end
+        else
+          LEFT = LEFT .. clickable(tabs[1])
+          limit = limit - w
+          remove(tabs, 1)
+        end
+      else
+        break
+      end
+    end
+  end
 
   -- now keep the current buffer center-screen as much as possible
   local L = { ['width'] = 0 }
@@ -126,7 +169,7 @@ function fit_tabline(center, tabs)
   local left_has_been_cut, right_has_been_cut, arrow = false, false, 0
 
   if ( L.width + R.width ) > limit then
-    while limit - ( L.width + R.width + arrow ) < 0 do
+    while next(tabs) and limit - ( L.width + R.width + arrow ) < 0 do
       -- remove a tab from the biggest side
       if L.width <= R.width then
         right_has_been_cut = true
@@ -137,18 +180,20 @@ function fit_tabline(center, tabs)
       end
     end
     local ntabs = #tabs
-    if left_has_been_cut then
-      tabs[1].label = '%#DiffDelete# < ' .. tabs[1].label
-    end
-    -- adapt the tabs to the available space
-    local i, used = 1, L.width + R.width + arrow
-    while used < limit do
-      if i > ntabs then i = 1 end
-      tabs[i].label = tabs[i].label .. ' '
-      i, used = i + 1, used + 1
-    end
-    if not s.show_button and right_has_been_cut then
-      tabs[ntabs].label = printf('%s%%#DiffDelete# > ', strsub(tabs[ntabs].label, 1, #tabs[ntabs].label - 4))
+    if ntabs > 0 then
+      if left_has_been_cut then
+        tabs[1].label = '%#DiffDelete# < ' .. tabs[1].label
+      end
+      -- adapt the tabs to the available space
+      local i, used = 1, L.width + R.width + arrow
+      while used < limit do
+        if i > ntabs then i = 1 end
+        tabs[i].label = tabs[i].label .. ' '
+        i, used = i + 1, used + 1
+      end
+      if not s.show_button and right_has_been_cut then
+        tabs[ntabs].label = printf('%s%%#DiffDelete# > ', strsub(tabs[ntabs].label, 1, #tabs[ntabs].label - 4))
+      end
     end
   else
     -- make labels a bit broader as long as there is enough room
@@ -162,23 +207,10 @@ function fit_tabline(center, tabs)
     end
   end
 
-  -- button to close buffer
-  local button = '@CloseButtonClick@' .. i.close .. '%X'
-
-  if h.buffers_mode() then
-    if s.clickable_bufline and s.show_button then
-      for _, l in ipairs(tabs) do
-        l.label = '%' .. l.n .. '@BuflineClick@' .. l.label .. '%X'
-        .. '%' .. l.n .. button
-      end
-    elseif s.clickable_bufline then
-      for _, l in ipairs(tabs) do
-        l.label = '%' .. l.n .. '@BuflineClick@' .. l.label .. '%X'
-      end
-    elseif s.show_button then
-      for _, l in ipairs(tabs) do
-        l.label = l.label .. '%' .. l.n .. button
-      end
+  -- make other buffers clickable
+  if BuffersMode then
+    for _, t in ipairs(tabs) do
+      t.label = clickable(t)
     end
   end
 
@@ -188,7 +220,7 @@ function fit_tabline(center, tabs)
       labels[n] = '%' .. n .. 'T' .. l
     end
   end
-  labels = concat(labels, '')
+  labels = LEFT .. concat(labels, '')
   if s.tabs_badge and s.tabs_badge.left then
     return tabsbadge .. modebadge .. labels .. '%#TFill#%=' .. cwdbadge .. '%999X'
   else

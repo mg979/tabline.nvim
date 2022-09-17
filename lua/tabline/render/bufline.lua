@@ -121,6 +121,7 @@ function format_buffer_labels(bufs) -- {{{1
     local buf = {
       nr = bnr,
       n = k,
+      keepleft = b.special or b.pinned,
       name = b.name or buf_path(bnr, not s.show_full_path),
       hi = (iscur and b.special)   and 'Special' or
            iscur                   and 'Select' or
