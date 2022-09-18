@@ -19,7 +19,7 @@ FEATURES                                                        *tnv-features*
 The main features of the plugin are:
 
   * three tabline modes: tabs, buffers, |arglist|              |tnv-rendering|
-  * clickable and reorderable bufferline
+  * clickable {1} and reorderable bufferline
   * rename tabs/buffers
   * optional buffer filtering on the base of CWD/custom filters
 
@@ -32,9 +32,9 @@ Also:
   * clean up buffers across all tabs and other commands
   * session management with fzf
 
-  {1} https://github.com/kyazdani42/nvim-web-devicons
-  {2} with a font that supports them, for example https://www.nerdfonts.com/
-
+  {1} LMB selects, RMB puts last, S-RMB deletes buffer
+  {2} https://github.com/kyazdani42/nvim-web-devicons
+  {3} with a font that supports them, for example https://www.nerdfonts.com/
 
 
 
@@ -91,7 +91,7 @@ initialized. For the default value, run `:Tabline config`
   |label_style|           see below
   |show_full_path|        shortened full path, for example `~/.l/s/n/s/file.ext`
   |show_unnamed|          show unnamed buffers in the bufferline
-  |clickable_bufline|     LMB selects, RMB puts last, S-RMB deletes buffer
+  |overflow_arrows|       show an arrow where tabline overflows
   |max_recent|            number of buffers that can be rendered (most recent)
   |scratch_label|         label for scratch buffers
   |unnamed_label|         label for unnamed regular buffers

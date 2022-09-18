@@ -124,11 +124,8 @@ function fit_tabline(center, tabs)
       if tabs[1].keepleft then
         local w = labelwidth(tabs[1].label) + buttonWidth
         if limit - w < 0 then
-          if s.tabs_badge and s.tabs_badge.left then
-            return tabsbadge .. modebadge .. LEFT .. '%#TFill#%=' .. cwdbadge .. '%999X'
-          else
-            return modebadge .. LEFT .. '%#TFill#%=' .. tabsbadge .. cwdbadge .. '%999X'
-          end
+          limit = 0
+          break
         else
           LEFT = LEFT .. clickable(tabs[1])
           limit = limit - w
@@ -137,6 +134,15 @@ function fit_tabline(center, tabs)
       else
         break
       end
+    end
+  end
+
+  -- no more tabs, or no more room
+  if limit == 0 or #tabs == 0 then
+    if s.tabs_badge and s.tabs_badge.left then
+      return tabsbadge .. modebadge .. LEFT .. '%#TFill#%=' .. cwdbadge .. '%999X'
+    else
+      return modebadge .. LEFT .. '%#TFill#%=' .. tabsbadge .. cwdbadge .. '%999X'
     end
   end
 
@@ -181,7 +187,7 @@ function fit_tabline(center, tabs)
     end
     local ntabs = #tabs
     if ntabs > 0 then
-      if left_has_been_cut then
+      if s.overflow_arrows and left_has_been_cut then
         tabs[1].label = '%#DiffDelete# < ' .. tabs[1].label
       end
       -- adapt the tabs to the available space
@@ -191,7 +197,7 @@ function fit_tabline(center, tabs)
         tabs[i].label = tabs[i].label .. ' '
         i, used = i + 1, used + 1
       end
-      if not s.show_button and right_has_been_cut then
+      if s.overflow_arrows and not s.show_button and right_has_been_cut then
         tabs[ntabs].label = printf('%s%%#DiffDelete# > ', strsub(tabs[ntabs].label, 1, #tabs[ntabs].label - 4))
       end
     end

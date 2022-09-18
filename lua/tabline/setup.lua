@@ -39,6 +39,7 @@ M.settings = {  -- user settings {{{1
   ascii_only = false,
   show_icons = true,
   show_button = false,
+  overflow_arrows = false,
   colored_icons = true,
   icon_spacing = '  ',
   separators = {'▎', '▏'}
