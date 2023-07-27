@@ -16,7 +16,7 @@ if not ok then
   icons = nil
 else
   icons = icons.get_icons()
-  icons.fzf = { icon = "🗲", color = "#d0bf41", cterm_color = "185", name = 'fzf' }
+  icons.fzf = { icon = "", color = "#d0bf41", cterm_color = "185", name = 'fzf' }
   icons.python = { icon = "", color = "#3572A5", cterm_color = "67", name = 'python' }
   icons.default = { icon = "", color = "#6d8086", cterm_color = "66", name = "default" }
 end
