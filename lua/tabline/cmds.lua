@@ -191,7 +191,7 @@ end
 
 local function prev_tab(args) -- Prev tab {{{1
   if h.tabs_mode() then
-    vim.cmd('tabnext')
+    vim.cmd('tabprevious')
   elseif h.buffers_mode() then
     local cnt, first = unpack(args)
     local bufs = get_bufs()
