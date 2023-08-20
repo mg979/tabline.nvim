@@ -46,6 +46,7 @@ local settings = {
   ascii_only                = false,
   scratch_label             = '[Scratch]',
   unnamed_label             = '[Unnamed]',
+  fzf_layout                = { down = '30%' },
 }
 
 

@@ -3,6 +3,7 @@ if vim.fn.exists('g:loaded_fzf') == 0 then
 end
 
 local a = require'tabline.fzf.ansi'
+local c = require'tabline.setup'.settings
 
 -- vim functions {{{1
 local fn = vim.fn
@@ -132,25 +133,23 @@ end
 
 local function list_buffers()
   statusline("Open Buffer")
-  fn['fzf#run']({
-      source = tab_buffers(),
-      sink = function(line)
-        local _,_,b = string.find(line, '^%s*%[(%d+)%]')
-        execute('b ' .. b)
-      end,
-      down = '30%',
-      options = '--ansi --header-lines=1 --no-preview'
-    })
+  fn['fzf#run'](vim.tbl_deep_extend('force', {
+    source = tab_buffers(),
+    sink = function(line)
+      local _,_,b = string.find(line, '^%s*%[(%d+)%]')
+      execute('b ' .. b)
+    end,
+    options = '--ansi --header-lines=1 --no-preview'
+  }, c.fzf_layout))
 end
 
 local function closed_tabs()
   statusline("Reopen Tab")
-  fn['fzf#run']({
-      source = closed_tabs_list(),
-      sink = tabreopen,
-      down = '30%',
-      options = '--ansi --header-lines=1 --no-preview'
-    })
+  fn['fzf#run'](vim.tbl_deep_extend('force', {
+    source = closed_tabs_list(),
+    sink = tabreopen,
+    options = '--ansi --header-lines=1 --no-preview'
+  }, c.fzf_layout))
 end
 
 local function load_session()
@@ -158,24 +157,22 @@ local function load_session()
   statusline("Load Session")
   local curloaded, sessions = require'tabline.fzf.sessions'.sessions_list()
   local options = '--ansi --no-preview --header-lines=' .. (curloaded and '2' or '1')
-  fn['fzf#run']({
-      source = sessions,
-      sink = require'tabline.fzf.sessions'.session_load,
-      down = '30%',
-      options = options,
-    })
+  fn['fzf#run'](vim.tbl_deep_extend('force', {
+    source = sessions,
+    sink = require'tabline.fzf.sessions'.session_load,
+    options = options,
+  }, c.fzf_layout))
 end
 
 local function delete_session()
   if mac_no_gnu() or no_sessions() then return end
   statusline("Delete Session")
   local _, sessions = require'tabline.fzf.sessions'.sessions_list()
-  fn['fzf#run']({
-      source = sessions,
-      sink = require'tabline.fzf.sessions'.session_delete,
-      down = '30%',
-      options = '--ansi --header-lines=1 --no-preview'
-    })
+  fn['fzf#run'](vim.tbl_deep_extend('force', {
+    source = sessions,
+    sink = require'tabline.fzf.sessions'.session_delete,
+    options = '--ansi --header-lines=1 --no-preview'
+  }, c.fzf_layout))
 end
 
 return {

@@ -110,6 +110,7 @@ initialized. For the default value, run `:Tabline config`
   |icon_spacing|          spaces between icon and filename (default '  ')
   |separators|            for active and inactive tabs/buffers
   |sessions_dir|          directory for the session management commands
+  |fzf_layout|            see below
 
 
   |modes|        {table}
@@ -139,6 +140,13 @@ initialized. For the default value, run `:Tabline config`
                (with a different color in tabs and buffers mode).
                Also as table: `{ buffers = 'bufnr' }` will use 'bufnr' in
                buffers mode, 'sep' (default value) for other modes.
+
+  |fzf_layout|   {table}
+               Determines the size and position of fzf window.
+               Same as `g:fzf_layout` in `fzf.vim`.
+               For example: `{ down = '30%' }` or
+               `{ window = { width = 0.9, height = 0.6 } }` for popup window
+               Reference: https://github.com/junegunn/fzf/blob/master/README-VIM.md
 
 
 

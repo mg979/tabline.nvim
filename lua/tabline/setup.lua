@@ -44,6 +44,7 @@ M.settings = {  -- user settings {{{1
   colored_icons = true,
   icon_spacing = '  ',
   separators = {'▎', '▏'},
+  fzf_layout = { down = '30%' },
 }
 
 M.icons = { -- icons {{{1
