@@ -6,6 +6,7 @@ local fn = vim.fn
 local M = { ran_once = false }
 
 M.global = { -- internal tables {{{1
+  buffers = {},
   closed_tabs = {},
   pinned = {},
   valid = {},

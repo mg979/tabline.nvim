@@ -265,10 +265,10 @@ function M.session_post_clean_up()
   end
   for i = 1, bufnr('$') do
     if g.buffers[i] then
-      if not buflisted(i) or (buflisted(i) and bufname(i) == '') then
-        -- FIXME: maybe I should check some more stuff before wiping,
+      if buflisted(i) == 0 or (buflisted(i) == 1 and bufname(i) == '') then
+        -- FIXME: maybe I should check some more stuff before deleting,
         -- for example the size of the buffer
-        execute(i .. 'bwipe', 'silent!')
+        execute(i .. 'bdelete', 'silent!')
         g.buffers[i] = nil
       end
     end
