@@ -49,6 +49,7 @@ function M.apply(theme, reload)
       s[k] = v
     end
   end
+  vim.cmd[[doautocmd <nomodeline> User TablineThemePost]]
 end
 
 function M.add(theme)

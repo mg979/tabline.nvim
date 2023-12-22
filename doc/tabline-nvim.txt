@@ -446,8 +446,17 @@ while: >
 
 becomes: >
   hi link TSelect Pmenu
+<
+                                                            *TablineThemePost*
 
+If `settings.theme` is false or nil, no theme is loaded, and you should define
+your own highlight groups.
 
+If you only want to customize some highlight groups, you can do it with an
+autocommand:
+>
+  au User TablineThemePost call MyCustomHighlights()
+<
 
 
 CREDITS                                                          *tnv-credits*
