@@ -205,32 +205,40 @@ local function select_tab_with_char(cnt) -- Select tab with character {{{1
 end
 
 local function next_tab(args) -- Next tab {{{1
-  local cnt, last = unpack(args)
-  local bufs = get_bufs()
-  local max = #bufs
-  if last then
-    vim.cmd('buffer ' .. bufs[max])
-    return
+  if h.tabs_mode() then
+    vim.cmd('tabnext')
+  elseif h.buffers_mode() then
+    local cnt, last = unpack(args)
+    local bufs = get_bufs()
+    local max = #bufs
+    if last then
+      vim.cmd('buffer ' .. bufs[max])
+      return
+    end
+    local cur = index(bufs, bufnr()) or bufs[1]
+    local target = (cur - 1 + (cnt or 1)) % max + 1
+    vim.cmd('buffer ' .. bufs[target])
   end
-  local cur = index(bufs, bufnr()) or bufs[1]
-  local target = (cur - 1 + (cnt or 1)) % max + 1
-  vim.cmd('buffer ' .. bufs[target])
 end
 
 local function prev_tab(args) -- Prev tab {{{1
-  local cnt, first = unpack(args)
-  local bufs = get_bufs()
-  if first then
-    vim.cmd('buffer ' .. bufs[1])
-    return
+  if h.tabs_mode() then
+    vim.cmd('tabprevious')
+  elseif h.buffers_mode() then
+    local cnt, first = unpack(args)
+    local bufs = get_bufs()
+    if first then
+      vim.cmd('buffer ' .. bufs[1])
+      return
+    end
+    local max = #bufs
+    local cur = index(bufs, bufnr()) or bufs[1]
+    local target = cur - (cnt or 1)
+    while target <= 0 do
+      target = target + max
+    end
+    vim.cmd('buffer ' .. bufs[target])
   end
-  local max = #bufs
-  local cur = index(bufs, bufnr()) or bufs[1]
-  local target = cur - (cnt or 1)
-  while target <= 0 do
-    target = target + max
-  end
-  vim.cmd('buffer ' .. bufs[target])
 end
 
 local function move_left(arg) -- Move current tab N positions to the left {{{1
